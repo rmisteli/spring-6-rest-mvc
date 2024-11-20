@@ -104,7 +104,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testUpdateBeerNullBeerName() throws Exception {
+    void testUpdateBeerBlankName() throws Exception {
         BeerDTO beer = beerServiceImpl.listBeers().get(0);
         beer.setBeerName("");
 

@@ -9,6 +9,6 @@ public interface BeerMapper {
 
     Beer beerDtoToBeer(BeerDTO beerDTO);
 
-    BeerDTO beerToBeerDTO(Beer beer);
+    BeerDTO beerToBeerDto(Beer beer);
 
 }

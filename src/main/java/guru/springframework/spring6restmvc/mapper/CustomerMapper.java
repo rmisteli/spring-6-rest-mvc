@@ -9,6 +9,6 @@ public interface CustomerMapper {
 
     Customer customerDtoToCustomer(CustomerDTO customerDto);
 
-    CustomerDTO customerToCustomerDTO(Customer customer);
+    CustomerDTO customerToCustomerDto(Customer customer);
 
 }

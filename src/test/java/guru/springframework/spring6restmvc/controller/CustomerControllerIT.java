@@ -59,9 +59,9 @@ class CustomerControllerIT {
     @Rollback
     @Transactional
     @Test
-    void testUpdatingCustomer() {
+    void testUpdatingExistingCustomer() {
         Customer customer = customerRepository.findAll().get(0);
-        CustomerDTO customerDTO = customerMapper.customerToCustomerDTO(customer);
+        CustomerDTO customerDTO = customerMapper.customerToCustomerDto(customer);
         customerDTO.setId(null);
         customerDTO.setVersion(null);
         final String name = "UPDATE";
@@ -95,14 +95,14 @@ class CustomerControllerIT {
     }
 
     @Test
-    void testGetBeerByIdNotFound() {
+    void testGetCustomerByIdNotFound() {
         assertThrows(NotFoundException.class, () -> {
             customerController.getCustomerById(UUID.randomUUID());
         });
     }
 
     @Test
-    void testGetById() {
+    void testGetCustomerById() {
         Customer customer = customerRepository.findAll().get(0);
 
         CustomerDTO customerDTO = customerController.getCustomerById(customer.getId());

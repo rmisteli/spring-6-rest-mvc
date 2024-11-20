@@ -24,18 +24,18 @@ public class CustomerServiceJPA implements CustomerService {
     public List<CustomerDTO> listCustomers() {
         return customerRepository.findAll()
                 .stream()
-                .map(customerMapper::customerToCustomerDTO)
+                .map(customerMapper::customerToCustomerDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<CustomerDTO> getCustomerById(UUID id) {
-        return Optional.ofNullable(customerMapper.customerToCustomerDTO(customerRepository.findById(id).orElse(null)));
+        return Optional.ofNullable(customerMapper.customerToCustomerDto(customerRepository.findById(id).orElse(null)));
     }
 
     @Override
     public CustomerDTO saveNewCustomer(CustomerDTO customer) {
-        return customerMapper.customerToCustomerDTO(customerRepository.save(customerMapper.customerDtoToCustomer(customer)));
+        return customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(customer)));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CustomerServiceJPA implements CustomerService {
         customerRepository.findById(customerId).ifPresentOrElse(foundCustomer -> {
             foundCustomer.setName(customer.getName());
             atomicReference.set(Optional.of(customerMapper
-                    .customerToCustomerDTO(customerRepository.save(foundCustomer))));
+                    .customerToCustomerDto(customerRepository.save(foundCustomer))));
         }, () -> atomicReference.set(Optional.empty()));
 
         return atomicReference.get();

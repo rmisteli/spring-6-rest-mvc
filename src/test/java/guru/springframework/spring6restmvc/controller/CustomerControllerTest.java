@@ -30,14 +30,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CustomerController.class)
 class CustomerControllerTest {
 
+    @MockBean
+    CustomerService customerService;
+
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
-
-    @MockBean
-    CustomerService customerService;
 
     CustomerServiceImpl customerServiceImpl;
 
@@ -67,8 +67,8 @@ class CustomerControllerTest {
 
         verify(customerService).patchCustomerById(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
 
-        assertThat(customer.getId()).isEqualTo(uuidArgumentCaptor.getValue());
-        assertThat(customerMap.get("name")).isEqualTo(customerArgumentCaptor.getValue().getName());
+        assertThat(uuidArgumentCaptor.getValue()).isEqualTo(customer.getId());
+        assertThat(customerArgumentCaptor.getValue().getName()).isEqualTo(customerMap.get("name"));
     }
 
     @Test
