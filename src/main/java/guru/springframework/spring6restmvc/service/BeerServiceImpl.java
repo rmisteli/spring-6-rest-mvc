@@ -47,7 +47,7 @@ public class BeerServiceImpl implements BeerService {
                 .id(UUID.randomUUID())
                 .version(1)
                 .beerName("Sunshine City")
-                .beerStyle(BeerStyle.PILS)
+                .beerStyle(BeerStyle.PILSNER)
                 .upc("12547")
                 .price(new BigDecimal("9.99"))
                 .quantityOnHand(524)
