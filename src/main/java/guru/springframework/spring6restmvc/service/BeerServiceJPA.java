@@ -8,13 +8,15 @@ import guru.springframework.spring6restmvc.repository.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -23,41 +25,72 @@ public class BeerServiceJPA implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
 
-    @Override
-    public List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
+    private final static int DEFAULT_PAGE = 0;
+    private final static int DEFAULT_PAGE_SIZE = 25;
 
-        List<Beer> beerList;
+    @Override
+    public Page<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize) {
+
+        PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
+
+        Page<Beer> beerPage;
 
         if(StringUtils.hasText(beerName) && beerStyle == null) {
-            beerList = listBeerByName(beerName);
+
+            beerPage = listBeerByName(beerName, pageRequest);
         } else if(!StringUtils.hasText(beerName) && beerStyle != null) {
-            beerList = listBeerByStyle(beerStyle);
+            beerPage = listBeerByStyle(beerStyle, pageRequest);
         } else if(StringUtils.hasText(beerName) && beerStyle != null) {
-            beerList = listBeerByNameAndStyle(beerName, beerStyle);
+            beerPage = listBeerByNameAndStyle(beerName, beerStyle, pageRequest);
         } else {
-            beerList = beerRepository.findAll();
+            beerPage = beerRepository.findAll(pageRequest);
         }
 
         if(showInventory != null && !showInventory) {
-            beerList.forEach(beer -> beer.setQuantityOnHand(null));
+            beerPage.forEach(beer -> beer.setQuantityOnHand(null));
         }
 
-        return beerList.stream()
-                    .map(beerMapper::beerToBeerDto)
-                    .collect(Collectors.toList());
+        return beerPage.map(beerMapper::beerToBeerDto);
     }
 
-    public List<Beer> listBeerByName(String beerName) {
-        return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
+    public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+        int queryPageNumber;
+        int queryPageSize;
+
+        if(pageNumber != null && pageNumber > 0) {
+            queryPageNumber = pageNumber -1 ;
+        } else {
+            queryPageNumber = DEFAULT_PAGE;
+        }
+
+        if(pageSize == null || pageSize <= 0) {
+            queryPageSize = DEFAULT_PAGE_SIZE;
+        } else {
+            if(pageSize > 1000) {
+                queryPageSize = 1000;
+            } else {
+                queryPageSize = pageSize;
+            }
+        }
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "beerName");
+        //Sort sort2 = Sort.by(Sort.Order.asc("beerName"));
+
+        return PageRequest.of(queryPageNumber, queryPageSize, sort);
     }
 
-    public List<Beer> listBeerByStyle(BeerStyle beerStyle) {
-        return beerRepository.findAllByBeerStyle(beerStyle);
+    public Page<Beer> listBeerByName(String beerName, Pageable pageable) {
+        return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%", pageable);
     }
 
-    public List<Beer> listBeerByNameAndStyle(String beerName, BeerStyle beerStyle) {
-        return beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + beerName + "%", beerStyle);
+    public Page<Beer> listBeerByStyle(BeerStyle beerStyle, Pageable pageable) {
+        return beerRepository.findAllByBeerStyle(beerStyle, pageable);
     }
+
+    public Page<Beer> listBeerByNameAndStyle(String beerName, BeerStyle beerStyle, Pageable pageable) {
+        return beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + beerName + "%", beerStyle, pageable);
+    }
+
 
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
