@@ -70,7 +70,7 @@ public class BeerController {
 
     @GetMapping(BEER_PATH_ID)
     public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) {
-        log.debug("getBeerById() called in Controller");
+        log.debug("=== getBeerById() called in Controller");
         return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
     }
 
