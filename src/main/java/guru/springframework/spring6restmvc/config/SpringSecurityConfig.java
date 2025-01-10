@@ -20,12 +20,6 @@ public class SpringSecurityConfig {
         http
                 .securityMatcher(EndpointRequest.toAnyEndpoint())
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
-
-//                .authorizeRequests(
-//                        authorize ->
-//                                authorize.requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
-//                );
-
         return http.build();
     }
 
