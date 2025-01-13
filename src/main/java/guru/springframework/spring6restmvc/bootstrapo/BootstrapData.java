@@ -17,27 +17,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class BootstrapData implements CommandLineRunner {
-    
+
     private final BeerRepository beerRepository;
     private final CustomerRepository customerRepository;
     private final BeerCsvService beerCsvService;
     
     @Override
     public void run(String... args) throws Exception {
-        LoadBeerData();
-        loadCSVData();
+        loadBeerData();
+        loadCsvData();
         loadCustomerData();
     }
 
-    private void loadCSVData() throws FileNotFoundException {
+    private void loadCsvData() throws FileNotFoundException {
         if(beerRepository.count() < 10) {
             File file = ResourceUtils.getFile("classpath:csvdata/beers.csv");
 
@@ -69,7 +67,7 @@ public class BootstrapData implements CommandLineRunner {
         }
     }
 
-    private void LoadBeerData() {
+    private void loadBeerData() {
         if(beerRepository.count() == 0) {
             Beer beer1 = Beer.builder()
                     .beerName("Galaxy Cat")

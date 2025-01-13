@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
+import jakarta.validation.constraints.NotBlank;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class BeerOrderShipment {
     @OneToOne
     private BeerOrder beerOrder;
 
+    @NotBlank
     private String trackingNumber;
 
     @Override
