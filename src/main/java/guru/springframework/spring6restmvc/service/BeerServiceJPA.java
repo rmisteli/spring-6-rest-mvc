@@ -1,20 +1,28 @@
 package guru.springframework.spring6restmvc.service;
 
 import guru.springframework.spring6restmvc.entity.Beer;
+import guru.springframework.spring6restmvc.event.BeerCreatedEvent;
+import guru.springframework.spring6restmvc.event.BeerDeletedEvent;
+import guru.springframework.spring6restmvc.event.BeerPatchedEvent;
+import guru.springframework.spring6restmvc.event.BeerUpdatedEvent;
 import guru.springframework.spring6restmvc.mapper.BeerMapper;
 import guru.springframework.spring6restmvc.model.BeerDTO;
 import guru.springframework.spring6restmvc.model.BeerStyle;
 import guru.springframework.spring6restmvc.repository.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,6 +37,7 @@ public class BeerServiceJPA implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
     private final CacheManager cacheManager;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_PAGE_SIZE = 25;
@@ -109,15 +118,22 @@ public class BeerServiceJPA implements BeerService {
 
     @Override
     public BeerDTO saveNewBeer(BeerDTO beer) {
-        cacheManager.getCache("listBeerCache").clear();
+        if(cacheManager.getCache("listBeerCache") != null) {
+            cacheManager.getCache("listBeerCache").clear();
+        }
 
-        return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(beer)));
+        val savedBeer = beerRepository.save(beerMapper.beerDtoToBeer(beer));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        applicationEventPublisher.publishEvent(new BeerCreatedEvent(savedBeer, auth));
+
+        return beerMapper.beerToBeerDto(savedBeer);
     }
 
     @Override
     public Optional<BeerDTO> updateBeerById(UUID beerId, BeerDTO beer) {
-        cacheManager.getCache("beerCache").evict("beerId");
-        cacheManager.getCache("listBeerCache").clear();
+        clearCache();
 
         AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
 
@@ -126,6 +142,13 @@ public class BeerServiceJPA implements BeerService {
             foundBeer.setBeerStyle(beer.getBeerStyle());
             foundBeer.setUpc(beer.getUpc());
             foundBeer.setPrice(beer.getPrice());
+
+            val savedBeer = beerRepository.save(foundBeer);
+
+            val auth = SecurityContextHolder.getContext().getAuthentication();
+
+            applicationEventPublisher.publishEvent(new BeerUpdatedEvent(savedBeer, auth));
+
             atomicReference.set(Optional.of(beerMapper
                     .beerToBeerDto(beerRepository.save(foundBeer))));
         }, () -> atomicReference.set(Optional.empty()));
@@ -133,16 +156,15 @@ public class BeerServiceJPA implements BeerService {
         return atomicReference.get();
     }
 
-//    @Caching(evict = {
-//            @CacheEvict(cacheNames = "beerCache", key = "#beerId"),
-//            @CacheEvict(cacheNames = "beerListCache")
-//    })
     @Override
     public Boolean deleteBeerById(UUID beerId) {
-        cacheManager.getCache("beerCache").evict("beerId");
-        cacheManager.getCache("listBeerCache").clear();
+        clearCache();
 
         if(beerRepository.existsById(beerId)) {
+            val auth = SecurityContextHolder.getContext().getAuthentication();
+
+            applicationEventPublisher.publishEvent(new BeerDeletedEvent(Beer.builder().id(beerId).build(), auth));
+
             beerRepository.deleteById(beerId);
             return true;
         }
@@ -151,8 +173,7 @@ public class BeerServiceJPA implements BeerService {
 
     @Override
     public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beer) {
-        cacheManager.getCache("beerCache").evict("beerId");
-        cacheManager.getCache("listBeerCache").clear();
+        clearCache();
 
         AtomicReference<Optional<BeerDTO>> atomicReference = new AtomicReference<>();
 
@@ -172,6 +193,13 @@ public class BeerServiceJPA implements BeerService {
             if (beer.getQuantityOnHand() != null){
                 foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
             }
+
+            val savedBeer = beerRepository.save(foundBeer);
+
+            val auth = SecurityContextHolder.getContext().getAuthentication();
+
+            applicationEventPublisher.publishEvent(new BeerPatchedEvent(savedBeer, auth));
+
             atomicReference.set(Optional.of(beerMapper
                     .beerToBeerDto(beerRepository.save(foundBeer))));
         }, () -> {
@@ -179,5 +207,14 @@ public class BeerServiceJPA implements BeerService {
         });
 
         return atomicReference.get();
+    }
+
+    private void clearCache() {
+        if(cacheManager.getCache("beerCache") != null) {
+            cacheManager.getCache("beerCache").evict("beerId");
+        }
+        if(cacheManager.getCache("listBeerCache") != null) {
+            cacheManager.getCache("listBeerCache").clear();
+        }
     }
 }
