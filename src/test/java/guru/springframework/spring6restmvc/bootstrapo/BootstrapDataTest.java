@@ -1,5 +1,7 @@
 package guru.springframework.spring6restmvc.bootstrapo;
 
+import guru.springframework.spring6restmvc.bootstrap.BootstrapData;
+import guru.springframework.spring6restmvc.repository.BeerOrderRepository;
 import guru.springframework.spring6restmvc.repository.BeerRepository;
 import guru.springframework.spring6restmvc.repository.CustomerRepository;
 import guru.springframework.spring6restmvc.service.BeerCsvService;
@@ -17,6 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BootstrapDataTest {
 
     @Autowired
+    BeerOrderRepository beerOrderRepository;
+
+    @Autowired
     BeerRepository beerRepository;
 
     @Autowired
@@ -29,7 +34,7 @@ class BootstrapDataTest {
 
     @BeforeEach
     void setUp() {
-        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService);
+        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService, beerOrderRepository);
     }
 
     @Test

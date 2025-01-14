@@ -1,4 +1,4 @@
-docker run -e MYSQL_ROOT_PASSWORD=password -p 3307:3306 --name spring-mysql -d mysql:8
+docker run -e MYSQL_ROOT_PASSWORD=password -p 3307:3306 --name spring-6-mysql -d mysql:8
 
 
 docker run
