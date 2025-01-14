@@ -1,6 +1,5 @@
-package guru.springframework.spring6restmvc.bootstrapo;
+package guru.springframework.spring6restmvc.bootstrap;
 
-import guru.springframework.spring6restmvc.bootstrap.BootstrapData;
 import guru.springframework.spring6restmvc.repository.BeerOrderRepository;
 import guru.springframework.spring6restmvc.repository.BeerRepository;
 import guru.springframework.spring6restmvc.repository.CustomerRepository;
