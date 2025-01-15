@@ -1,5 +1,7 @@
 package guru.springframework.spring6restmvc.service;
 
+import guru.springframework.spring6restmvc.entity.BeerOrder;
+import guru.springframework.spring6restmvc.model.BeerOrderCreateDTO;
 import guru.springframework.spring6restmvc.model.BeerOrderDTO;
 import org.springframework.data.domain.Page;
 
@@ -12,4 +14,5 @@ public interface BeerOrderService {
 
     Page<BeerOrderDTO> listOrders(Integer pageNumber, Integer pageSize);
 
+    BeerOrder createOrder(BeerOrderCreateDTO beerOrderCreateDTO);
 }

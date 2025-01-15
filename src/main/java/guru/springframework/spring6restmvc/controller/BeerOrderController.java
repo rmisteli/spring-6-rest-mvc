@@ -1,14 +1,15 @@
 package guru.springframework.spring6restmvc.controller;
 
+import guru.springframework.spring6restmvc.entity.BeerOrder;
+import guru.springframework.spring6restmvc.model.BeerOrderCreateDTO;
 import guru.springframework.spring6restmvc.model.BeerOrderDTO;
 import guru.springframework.spring6restmvc.service.BeerOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +30,13 @@ public class BeerOrderController {
     public Page<BeerOrderDTO> listOrders(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                          @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         return beerOrderService.listOrders(pageNumber, pageSize);
+    }
+
+    @PostMapping(BEER_ORDER_PATH)
+    public ResponseEntity<Void> createOrder(@RequestBody BeerOrderCreateDTO beerOrderCreateDTO) {
+        BeerOrder savedOrder = beerOrderService.createOrder(beerOrderCreateDTO);
+
+        return ResponseEntity.created(URI.create(BEER_ORDER_PATH + "/" + savedOrder.getId().toString())).build();
     }
 
 }
