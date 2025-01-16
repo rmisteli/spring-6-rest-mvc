@@ -1,5 +1,6 @@
 package guru.springframework.spring6restmvc.entity;
 
+import guru.springframework.spring6restmvc.model.BeerOrderLineStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -49,5 +50,9 @@ public class BeerOrderLine {
 
     @UpdateTimestamp
     private Timestamp lastModifiedDate;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private BeerOrderLineStatus orderLineStatus = BeerOrderLineStatus.NEW;
 
 }

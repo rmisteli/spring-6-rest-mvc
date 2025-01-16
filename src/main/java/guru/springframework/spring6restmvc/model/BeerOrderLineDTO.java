@@ -26,4 +26,6 @@ public class BeerOrderLineDTO {
 
     private Timestamp lastModifiedDate;
 
+    private BeerOrderLineStatus orderLineStatus;
+
 }
