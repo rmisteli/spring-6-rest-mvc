@@ -1,8 +1,8 @@
 package guru.springframework.spring6restmvc.service;
 
 import guru.springframework.spring6restmvc.mapper.CustomerMapper;
-import guru.springframework.spring6restmvc.model.CustomerDTO;
 import guru.springframework.spring6restmvc.repository.CustomerRepository;
+import guru.springframework.spring6restmvcapi.model.CustomerDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;

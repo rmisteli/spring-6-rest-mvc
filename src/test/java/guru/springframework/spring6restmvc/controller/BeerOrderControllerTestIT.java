@@ -1,10 +1,10 @@
 package guru.springframework.spring6restmvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import guru.springframework.spring6restmvc.model.*;
 import guru.springframework.spring6restmvc.repository.BeerOrderRepository;
 import guru.springframework.spring6restmvc.repository.BeerRepository;
 import guru.springframework.spring6restmvc.repository.CustomerRepository;
+import guru.springframework.spring6restmvcapi.model.*;
 import jakarta.transaction.Transactional;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;

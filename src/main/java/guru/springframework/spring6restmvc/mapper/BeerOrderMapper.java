@@ -3,9 +3,9 @@ package guru.springframework.spring6restmvc.mapper;
 import guru.springframework.spring6restmvc.entity.BeerOrder;
 import guru.springframework.spring6restmvc.entity.BeerOrderLine;
 import guru.springframework.spring6restmvc.entity.BeerOrderShipment;
-import guru.springframework.spring6restmvc.model.BeerOrderDTO;
-import guru.springframework.spring6restmvc.model.BeerOrderLineDTO;
-import guru.springframework.spring6restmvc.model.BeerOrderShipmentDTO;
+import guru.springframework.spring6restmvcapi.model.BeerOrderDTO;
+import guru.springframework.spring6restmvcapi.model.BeerOrderLineDTO;
+import guru.springframework.spring6restmvcapi.model.BeerOrderShipmentDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

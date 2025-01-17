@@ -1,10 +1,10 @@
 package guru.springframework.spring6restmvc.controller;
 
 import guru.springframework.spring6restmvc.entity.BeerOrder;
-import guru.springframework.spring6restmvc.model.BeerOrderCreateDTO;
-import guru.springframework.spring6restmvc.model.BeerOrderDTO;
-import guru.springframework.spring6restmvc.model.BeerOrderUpdateDTO;
 import guru.springframework.spring6restmvc.service.BeerOrderService;
+import guru.springframework.spring6restmvcapi.model.BeerOrderCreateDTO;
+import guru.springframework.spring6restmvcapi.model.BeerOrderDTO;
+import guru.springframework.spring6restmvcapi.model.BeerOrderUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
